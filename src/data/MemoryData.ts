@@ -1,0 +1,72 @@
+import { prisma } from '@lib/prisma';
+import { Memory } from 'src/model/Memory';
+
+export class MemoryData {
+  createMemory = async (memory: Memory): Promise<void> => {
+    try {
+      await prisma.memory.create({
+        data: {
+          content: memory.content,
+          excerpt: memory.excerpt,
+          coverUrl: memory.coverUrl,
+          isPublic: memory.isPublic,
+          userId: memory.userId,
+        },
+      });
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  };
+
+  getMemories = async (): Promise<Memory[]> => {
+    try {
+      const memories = await prisma.memory.findMany({
+        orderBy: {
+          createdAt: 'asc',
+        },
+      });
+
+      return memories;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  };
+
+  getMemoryById = async (id: string): Promise<Memory> => {
+    try {
+      const memory = await prisma.memory.findUnique({
+        where: { id },
+      });
+
+      return memory as Memory;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  };
+
+  updateMemory = async (id: string, memory: Memory): Promise<void> => {
+    try {
+      await prisma.memory.update({
+        where: { id },
+        data: {
+          content: memory.content,
+          excerpt: memory.excerpt,
+          coverUrl: memory.coverUrl,
+          isPublic: memory.isPublic,
+        },
+      });
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  };
+
+  deleteMemory = async (id: string): Promise<void> => {
+    try {
+      await prisma.memory.delete({
+        where: { id },
+      });
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  };
+}

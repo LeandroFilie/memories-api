@@ -1,16 +1,20 @@
-import fastify from 'fastify';
-import { PrismaClient } from '@prisma/client';
+import express from 'express';
+import cors from 'cors';
 
-const app = fastify();
-const prisma = new PrismaClient();
+import { memoryRouter } from '@routes/memoryRouter';
+import { AddressInfo } from 'net';
 
-app.get('/users', async () => {
-  const users = await prisma.user.findMany();
-  return users;
-});
+const app = express();
+app.use(cors());
+app.use(express.json());
 
-app.listen({
-  port: 3333,
-}).then(() => {
-  console.log('🚀 Server is running on http://localhost:3333');
+app.use('/memory', memoryRouter);
+
+const server = app.listen(process.env.PORT || 3003, () => {
+  if (server) {
+    const address = server.address() as AddressInfo;
+    console.log(`Server running at http://localhost:${address.port}`);
+  } else {
+    console.error('Failure initializing server.');
+  }
 });
