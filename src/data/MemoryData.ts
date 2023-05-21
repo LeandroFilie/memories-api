@@ -18,9 +18,12 @@ export class MemoryData {
     }
   };
 
-  getMemories = async (): Promise<Memory[]> => {
+  getMemories = async (userId: string): Promise<Memory[]> => {
     try {
       const memories = await prisma.memory.findMany({
+        where: {
+          userId
+        },
         orderBy: {
           createdAt: 'asc',
         },
@@ -32,7 +35,7 @@ export class MemoryData {
     }
   };
 
-  getMemoryById = async (id: string): Promise<Memory> => {
+  getMemoryById = async (id: string, userId: string): Promise<Memory> => {
     try {
       const memory = await prisma.memory.findUnique({
         where: { id },
@@ -44,10 +47,14 @@ export class MemoryData {
     }
   };
 
-  updateMemory = async (id: string, memory: Memory): Promise<void> => {
+  updateMemory = async (id: string, memory: Memory, userId: string): Promise<void> => {
     try {
-      await prisma.memory.update({
-        where: { id },
+      await prisma.memory.updateMany({
+        where: {
+          AND: [
+            {id}, {userId},
+          ]
+         },
         data: {
           content: memory.content,
           excerpt: memory.excerpt,
@@ -60,10 +67,14 @@ export class MemoryData {
     }
   };
 
-  deleteMemory = async (id: string): Promise<void> => {
+  deleteMemory = async (id: string, userId: string): Promise<void> => {
     try {
-      await prisma.memory.delete({
-        where: { id },
+      await prisma.memory.deleteMany({
+        where: {
+          AND : [
+            {id}, {userId},
+          ]
+         },
       });
     } catch (error: any) {
       throw new Error(error.message);

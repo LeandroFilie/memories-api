@@ -8,7 +8,6 @@ export class AuthController {
     try {
       const code = req.body.code as string;
       const result = await this.authBusiness.signin(code);
-      console.log(result);
 
       res.status(200).send({token: result});
     } catch (error: any) {

@@ -3,8 +3,6 @@ import { User } from "@model/User";
 
 export class AuthData{
   async getUserByGithubId(githubId: string): Promise<User> {
-    console.log(githubId);
-
     try{
       const user = await prisma.user.findFirst({
         where: {

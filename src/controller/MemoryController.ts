@@ -7,19 +7,18 @@ export class MemoryController {
 
   createMemory = async (req: Request, res: Response): Promise<void> => {
     try {
-      const userId = req.body.userId as string;
+      const token = req.headers.authorization as string;
       const content = req.body.content as string;
       const coverUrl = req.body.coverUrl as string;
       const isPublic = req.body.isPublic as number;
 
       const memoryDTO: MemoryDTO = {
-        userId,
         content,
         coverUrl,
         isPublic: !!isPublic,
       };
 
-      await this.memoryBusiness.createMemory(memoryDTO);
+      await this.memoryBusiness.createMemory(memoryDTO, token);
       res.status(200).send({ message: 'Memory created successfully.' });
     } catch (error: any) {
       res.status(error.statusCode || 500).send({ message: error.message });
@@ -28,7 +27,8 @@ export class MemoryController {
 
   getMemories = async (req: Request, res: Response) => {
     try {
-      const result = await this.memoryBusiness.getMemories();
+      const token = req.headers.authorization as string;
+      const result = await this.memoryBusiness.getMemories(token);
       res.status(200).send(result);
     } catch (error: any) {
       res.status(error.statusCode || 500).send({ message: error.message });
@@ -36,9 +36,10 @@ export class MemoryController {
   };
 
   getMemoryById = async (req: Request, res: Response) => {
-    const id = req.params.id as string;
     try {
-      const result = await this.memoryBusiness.getMemoryById(id);
+      const id = req.params.id as string;
+      const token = req.headers.authorization as string;
+      const result = await this.memoryBusiness.getMemoryById(id, token);
       res.status(200).send(result);
     } catch (error: any) {
       res.status(error.statusCode || 500).send({ message: error.message });
@@ -46,21 +47,20 @@ export class MemoryController {
   };
 
   updateMemory = async (req: Request, res: Response) => {
-    const id = req.params.id as string;
-    const userId = req.body.userId as string;
-    const content = req.body.content as string;
-    const coverUrl = req.body.coverUrl as string;
-    const isPublic = req.body.isPublic as number;
-
     try {
+      const id = req.params.id as string;
+      const content = req.body.content as string;
+      const coverUrl = req.body.coverUrl as string;
+      const isPublic = req.body.isPublic as number;
+      const token = req.headers.authorization as string;
+
       const memoryDTO: MemoryDTO = {
-        userId,
         content,
         coverUrl,
         isPublic: !!isPublic,
       };
 
-      await this.memoryBusiness.updateMemory(id, memoryDTO);
+      await this.memoryBusiness.updateMemory(id, memoryDTO, token);
       res.status(200).send({ message: 'Memory updated successfully.' });
     } catch (error: any) {
       res.status(error.statusCode || 500).send({ message: error.message });
@@ -68,9 +68,10 @@ export class MemoryController {
   };
 
   deleteMemory = async (req: Request, res: Response) => {
-    const id = req.params.id as string;
     try {
-      await this.memoryBusiness.deleteMemory(id);
+      const id = req.params.id as string;
+      const token = req.headers.authorization as string;
+      await this.memoryBusiness.deleteMemory(id, token);
       res.status(200).send({ message: 'Memory deleted successfully.' });
     } catch (error: any) {
       res.status(error.statusCode || 500).send({ message: error.message });
